@@ -14,7 +14,8 @@ ext_dns_values = {
   "sources"            = "{ingress}"
 }
 
-dns_domain           = "eks.a-sh.ae"
+dns_domain           = "k0s.a-sh.ae"
+
 ingress_gw_name      = "aws-load-balancer-controller"
 ingress_gw_role      = "load-balancer-controller"
 ingress_gw_chart     = "aws-load-balancer-controller"

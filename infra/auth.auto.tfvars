@@ -1,4 +1,4 @@
-adm_users = ["ash", "simon"]
-dev_users = ["ash_dev", "simon_dev"]
+adm_users = ["ash"]
+dev_users = ["ash_dev"]
 
 namespaces = ["dev"]

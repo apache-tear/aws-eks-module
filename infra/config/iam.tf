@@ -1,19 +1,21 @@
 variable "name_prefix" {
   type        = string
-  description = "Prefix to be used on each infrastructure object Name created in AWS."
-}
-variable "adm_users" {
-  type        = list(string)
-  description = "List of Kubernetes admins."
-}
-variable "dev_users" {
-  type        = list(string)
-  description = "List of Kubernetes developers."
+  description = "Prefix for object Names."
 }
 
-# create Admins & Developers user maps
+variable "adm_users" {
+  type        = list(string)
+  description = "List of k8s admins."
+}
+
+variable "dev_users" {
+  type        = list(string)
+  description = "List of k8s devs."
+}
+
+# Admins & Devs user maps
 locals {
-  admin_user_map_users = [
+  adm_user_map = [
     for admin_user in var.adm_users :
     {
       userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${admin_user}"
@@ -21,12 +23,13 @@ locals {
       groups   = ["system:masters"]
     }
   ]
-  developer_user_map_users = [
-    for developer_user in var.dev_users :
+
+  dev_user_map = [
+    for dev_user in var.dev_users :
     {
-      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${developer_user}"
-      username = developer_user
-      groups   = ["${var.name_prefix}-developers"]
+      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${dev_user}"
+      username = dev_user
+      groups   = ["${var.name_prefix}-devs"]
     }
   ]
 }
@@ -38,6 +41,7 @@ resource "time_sleep" "wait" {
     cluster_endpoint = data.aws_eks_cluster.cluster.endpoint
   }
 }
+
 resource "kubernetes_config_map_v1_data" "aws_auth_users" {
   metadata {
     name      = "aws-auth"
@@ -45,18 +49,17 @@ resource "kubernetes_config_map_v1_data" "aws_auth_users" {
   }
 
   data = {
-    mapUsers = yamlencode(concat(local.admin_user_map_users, local.developer_user_map_users))
+    mapUsers = yamlencode(concat(local.adm_user_map, local.dev_user_map))
   }
 
   force = true
-
   depends_on = [time_sleep.wait]
 }
 
-# create developers Role using RBAC
+# Create dev Role using RBAC
 resource "kubernetes_cluster_role" "iam_roles_developers" {
   metadata {
-    name = "${var.name_prefix}-developers"
+    name = "${var.name_prefix}-devs"
   }
 
   rule {
@@ -81,13 +84,13 @@ resource "kubernetes_cluster_role" "iam_roles_developers" {
 # bind developer Users with their Role
 resource "kubernetes_cluster_role_binding" "iam_roles_developers" {
   metadata {
-    name = "${var.name_prefix}-developers"
+    name = "${var.name_prefix}-devs"
   }
 
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "${var.name_prefix}-developers"
+    name      = "${var.name_prefix}-devs"
   }
 
   dynamic "subject" {

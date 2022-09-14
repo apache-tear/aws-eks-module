@@ -1,6 +1,6 @@
 variable "dns_domain" {
   type        = string
-  description = "DNS Zone name to be used from EKS Ingress."
+  description = "DNS Zone for Ingress."
 }
 
 variable "ingress_gw_name" {
@@ -10,7 +10,7 @@ variable "ingress_gw_name" {
 
 variable "ingress_gw_role" {
   type        = string
-  description = "IAM Role Name associated with load-balancer service."
+  description = "IAM Role associated with load-balancer service."
 }
 
 variable "ingress_gw_chart" {
@@ -44,7 +44,7 @@ resource "aws_acm_certificate" "eks_domain_cert" {
   }
 }
 
-resource "aws_route53_record" "eks_domain_cert_validation_dns" {
+resource "aws_route53_record" "validation_record" {
   for_each = {
     for dvo in aws_acm_certificate.eks_domain_cert.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
@@ -60,9 +60,10 @@ resource "aws_route53_record" "eks_domain_cert_validation_dns" {
   type            = each.value.type
   zone_id         = data.aws_route53_zone.base_domain.zone_id
 }
-resource "aws_acm_certificate_validation" "eks_domain_cert_validation" {
+
+resource "aws_acm_certificate_validation" "this" {
   certificate_arn         = aws_acm_certificate.eks_domain_cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.eks_domain_cert_validation_dns : record.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.validation_record : record.fqdn]
 }
 
 # deploy Ingress Controller
