@@ -1,4 +1,4 @@
-cluster_name  = "eks-zero"
+cluster_name  = "eks-v0"
 env_tag       = "dev"
 name_prefix   = "app"
 vpc_cidr      = "10.0.0.0/16"

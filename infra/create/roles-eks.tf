@@ -3,7 +3,7 @@ module "eks_ingress_iam" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.0"
 
-  role_name                              = var.ingress_gw_role
+  role_name                              = "load-balancer-controller"
   attach_load_balancer_controller_policy = true
 
   oidc_providers = {
@@ -19,7 +19,7 @@ module "eks_external_dns_iam" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.0"
 
-  role_name                     = var.ext_dns_role
+  role_name                     = "external-dns"
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = ["arn:aws:route53:::hostedzone/*"]
 

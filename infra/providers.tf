@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~>4.30"
+      version = "~>4.3"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -24,17 +24,17 @@ terraform {
     organization = "rocknrolldevs"
 
     workspaces {
-      name = "k8s-standard"
+      name = "k8s-module"
     }
   }
 }
 
 provider "aws" {
   region                   = "us-east-1"
-  shared_config_files      = ["~/.aws/config"]
-  shared_credentials_files = ["~/.aws/credentials"]
-  profile                  = "default"
-  
+  shared_config_files      = ["/home/shae256/.aws/config"]
+  shared_credentials_files = ["/home/shae256/.aws/credentials"]
+  profile = "us-east-1"
+
   default_tags {
     tags = {
       Environment = "Terraform"

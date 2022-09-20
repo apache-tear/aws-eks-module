@@ -6,12 +6,17 @@ resource "aws_eip" "nat_gw" {
   }
 }
 
+data "aws_availability_zones" "azs" {
+  state = "available"
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~>3.14"
 
   name = "${var.name_prefix}-vpc"
   cidr = var.vpc_cidr
+  azs  = data.aws_availability_zones.azs.names
 
   private_subnets = tolist([
     for i in range(3) :

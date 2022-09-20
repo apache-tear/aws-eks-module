@@ -34,7 +34,6 @@ locals {
   ]
 }
 
-# add 'mapUsers' section to 'aws-auth' configmap with Admins & Developers
 resource "time_sleep" "wait" {
   create_duration = "180s"
   triggers = {
@@ -56,7 +55,6 @@ resource "kubernetes_config_map_v1_data" "aws_auth_users" {
   depends_on = [time_sleep.wait]
 }
 
-# Create dev Role using RBAC
 resource "kubernetes_cluster_role" "iam_roles_developers" {
   metadata {
     name = "${var.name_prefix}-devs"
@@ -81,7 +79,6 @@ resource "kubernetes_cluster_role" "iam_roles_developers" {
   }
 }
 
-# bind developer Users with their Role
 resource "kubernetes_cluster_role_binding" "iam_roles_developers" {
   metadata {
     name = "${var.name_prefix}-devs"

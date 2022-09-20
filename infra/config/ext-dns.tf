@@ -1,25 +1,25 @@
 variable "ext_dns_role" {
   type        = string
-  description = "IAM Role Name associated with external-dns service."
+  description = "IAM Role for external-dns service."
 }
 variable "ext_dns_chart" {
   type        = string
-  description = "Chart Name associated with external-dns service."
+  description = "Chart Name of external-dns service."
 }
 
 variable "ext_dns_repo" {
   type        = string
-  description = "Chart Repo associated with external-dns service."
+  description = "Chart Repo of external-dns service."
 }
 
 variable "ext_dns_chart_ver" {
   type        = string
-  description = "Chart Repo associated with external-dns service."
+  description = "Chart Version of external-dns service."
 }
 
 variable "ext_dns_values" {
   type        = map(string)
-  description = "Values map required by external-dns service."
+  description = "Values map for external-dns service."
 }
 
 resource "helm_release" "external_dns" {

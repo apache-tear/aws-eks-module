@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~>4.30"
+      version = "~>4.3"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -22,6 +22,7 @@ terraform {
 }
 
 data "aws_caller_identity" "current" {}
+
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
